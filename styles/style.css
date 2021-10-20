@@ -1,0 +1,21 @@
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+.gm-style .gm-style-iw {
+  padding: 20px;
+}
+
+.territory-number {
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 25px;
+}
