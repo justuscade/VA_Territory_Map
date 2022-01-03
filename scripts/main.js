@@ -93,7 +93,7 @@ function initMap() {
 
   let infoAreas = new google.maps.InfoWindow();
 
-  layerTerritories.addListener("mouseover", function (event) {
+  layerTerritories.addListener("dblclick", function (event) {
     let feat = event.feature;
     let html =
       "<div id = 'zip-info'>" +
@@ -159,11 +159,11 @@ function initMap() {
   // -------------------------------------------
 
   // REVERSE GEOCODING
-  map.addListener("dblclick", (e) => {
+  map.addListener("contextmenu", (e) => {
     reverseGeocode(e);
   });
 
-  layerTerritories.addListener("dblclick", function (e) {
+  layerTerritories.addListener("contextmenu", function (e) {
     reverseGeocode(e);
   });
 
