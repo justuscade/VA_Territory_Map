@@ -36,6 +36,7 @@ function initMap() {
     center: center,
     zoom: 8.5,
     mapTypeControl: true,
+    disableDoubleClickZoom: true,
     styles: [
       {
         featureType: "poi.business",
