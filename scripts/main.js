@@ -1,6 +1,8 @@
 const urlGoogleSheetsTerritoriesData =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vRmf6o6Xynlqv4UVrj_WMWn_oSXgRGnPDGvzCObrUwFoncct3iMHBnvHGwYKWSirMByMY4ExI_KSNan/pub?output=csv";
 
+const keyAPI = "AIzaSyAXaZ0bkkxO42cfv9RAE71ztdkEWptTg6s";
+
 function getTerritoriesData() {
   Papa.parse(urlGoogleSheetsTerritoriesData, {
     download: true,
@@ -46,30 +48,24 @@ function initMap() {
     ],
   });
 
-
-
-  let layer1 = new google.maps.Data({ map: map });
-  layer1.addGeoJson(territories);
-  layer1.setStyle(function (feature) {
-    let colorId = feature.getProperty('color');
+  // TERRITORIES LAYER
+  let layerTerritories = new google.maps.Data({ map: map });
+  layerTerritories.addGeoJson(territories);
+  layerTerritories.setStyle(function (feature) {
+    let colorId = feature.getProperty("color");
     let color = "#FFFFFF";
 
     if (colorId === 1) {
       color = "#c3ecb2";
-    }
-    else if (colorId == 2) {
+    } else if (colorId == 2) {
       color = "#aadaff";
-    }
-    else if (colorId == 3) {
+    } else if (colorId == 3) {
       color = "#f58c9b";
-    }
-    else if (colorId == 4) {
+    } else if (colorId == 4) {
       color = "#f6cf65";
-    }
-    else if (colorId == 5) {
+    } else if (colorId == 5) {
       color = "#d79ce6";
-    }
-    else {
+    } else {
       color = "#FFFFFF";
     }
 
@@ -82,21 +78,21 @@ function initMap() {
     };
   });
 
-  layer1.addListener("mouseover", (event) => {
-    layer1.revertStyle();
-    layer1.overrideStyle(event.feature, {
+  layerTerritories.addListener("mouseover", (event) => {
+    layerTerritories.revertStyle();
+    layerTerritories.overrideStyle(event.feature, {
       strokeColor: "#000000",
       strokeOpacity: 1,
       strokeWeight: 2,
     });
   });
-  layer1.addListener("mouseout", (event) => {
-    layer1.revertStyle();
+  layerTerritories.addListener("mouseout", (event) => {
+    layerTerritories.revertStyle();
   });
 
   let infoAreas = new google.maps.InfoWindow();
 
-  layer1.addListener("click", function (event) {
+  layerTerritories.addListener("dblclick", function (event) {
     let feat = event.feature;
     let html =
       "<div id = 'zip-info'>" +
@@ -118,8 +114,10 @@ function initMap() {
   });
 
   infoWindow = new google.maps.InfoWindow();
-  const locationButton = document.createElement("button");
+  // -------------------------------------------
 
+  // GEOLOCATION
+  const locationButton = document.createElement("button");
   locationButton.textContent = "Location";
   locationButton.classList.add("custom-map-control-button");
   map.controls[google.maps.ControlPosition.TOP_LEFT].push(locationButton);
@@ -157,5 +155,159 @@ function initMap() {
     );
     infoWindow.open(map);
   }
-}
+  // -------------------------------------------
 
+  // REVERSE GEOCODING
+  map.addListener("contextmenu", (e) => {
+    reverseGeocode(e);
+  });
+
+  layerTerritories.addListener("contextmenu", function (e) {
+    reverseGeocode(e);
+  });
+
+  function reverseGeocode(mapsMouseEvent) {
+    let latitudeClickedPoint = mapsMouseEvent.latLng.toJSON().lat;
+    let longitudeClickedPoint = mapsMouseEvent.latLng.toJSON().lng;
+
+    let latlngClickedPoint = {
+      lat: parseFloat(latitudeClickedPoint),
+      lng: parseFloat(longitudeClickedPoint),
+    };
+
+    let latlngQueryString = latitudeClickedPoint + "," + longitudeClickedPoint;
+
+    axios
+      .get("https://maps.googleapis.com/maps/api/geocode/json", {
+        params: {
+          latlng: latlngQueryString,
+          key: keyAPI,
+          result_type: "street_address",
+        },
+      })
+      .then(function (response) {
+        let obtainedAddress = response.data.results[0].formatted_address;
+
+        let markerClickedPoint = new google.maps.Marker({
+          position: latlngClickedPoint,
+          map: map,
+        });
+
+        let infoWindow = new google.maps.InfoWindow({
+          position: mapsMouseEvent.latLng,
+        });
+
+        let infoWindowContent =
+          '<p class="address-result">' +
+          obtainedAddress +
+          "</p>" +
+          "Latitude: " +
+          latitudeClickedPoint.toPrecision(8) +
+          "<br>" +
+          "Longitude: " +
+          longitudeClickedPoint.toPrecision(8);
+
+        infoWindow.setContent(infoWindowContent);
+        infoWindow.open(map, markerClickedPoint);
+      })
+      .catch(function (error) {
+        console.log(error);
+        let markerClickedPoint = new google.maps.Marker({
+          position: latlngClickedPoint,
+          map: map,
+        });
+
+        let infoWindow = new google.maps.InfoWindow({
+          position: mapsMouseEvent.latLng,
+        });
+
+        infoWindow.setContent("Error obtaining address");
+        infoWindow.open(map, markerClickedPoint);
+      });
+  }
+  // -------------------------------------------
+
+  // GEOCODING
+  let locationForm = document.getElementById("location-form");
+  locationForm.addEventListener("submit", geocode);
+
+  function geocode(e) {
+    e.preventDefault();
+
+    let location = document.getElementById("location-input").value;
+
+    axios
+      .get("https://maps.googleapis.com/maps/api/geocode/json", {
+        params: {
+          address: location,
+          key: keyAPI,
+        },
+      })
+      .then(function (response) {
+        // Formatted Address
+        let formattedAddress = response.data.results[0].formatted_address;
+        let formattedAddressOutput = `
+            <ul class="list-group">
+              <li class="list-group-item">${formattedAddress}</li>
+            </ul>
+          `;
+
+        // Address Components
+        let addressComponents = response.data.results[0].address_components;
+        let addressComponentsOutput = '<ul class="list-group">';
+        for (let i = 0; i < addressComponents.length; i++) {
+          addressComponentsOutput += `
+              <li class="list-group-item"><strong>${addressComponents[i].types[0]}</strong>: ${addressComponents[i].long_name}</li>
+            `;
+        }
+        addressComponentsOutput += "</ul>";
+
+        // Geometry
+        let latitude = response.data.results[0].geometry.location.lat;
+        let longitude = response.data.results[0].geometry.location.lng;
+        let foundAddressLatLng = { lat: latitude, lng: longitude };
+
+        map.setCenter(foundAddressLatLng);
+
+        let markerFoundPoint = new google.maps.Marker({
+          position: foundAddressLatLng,
+          map,
+        });
+
+        let infoWindow = new google.maps.InfoWindow({
+          position: foundAddressLatLng,
+        });
+
+        let infoWindowContent =
+          '<p class="address-result">' +
+          formattedAddress +
+          "</p>" +
+          "Latitude: " +
+          latitude.toPrecision(8) +
+          "<br>" +
+          "Longitude: " +
+          longitude.toPrecision(8);
+
+        infoWindow.setContent(infoWindowContent);
+        infoWindow.open(map, markerFoundPoint);
+
+        let geometryOutput = `
+            <ul class="list-group">
+              <li class="list-group-item"><strong>Latitude</strong>: ${latitude}</li>
+              <li class="list-group-item"><strong>Longitude</strong>: ${longitude}</li>
+            </ul>
+          `;
+
+        // Output to app
+        document.getElementById("formatted-address").innerHTML =
+          formattedAddressOutput;
+        document.getElementById("address-components").innerHTML =
+          addressComponentsOutput;
+        document.getElementById("geometry").innerHTML = geometryOutput;
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+  // -------------------------------------------
+}
