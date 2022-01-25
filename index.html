@@ -8,6 +8,7 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Virginia Territories</title>
+    <link rel="shortcut icon" href="#" />
     <link rel="stylesheet" href="styles/style.css" />
     <link
       rel="stylesheet"
@@ -26,6 +27,14 @@
   <body>
     <div class="grid-container">
       <div id="search-container" class="container">
+        <button
+          type="button"
+          id="location-button"
+          class="btn btn-primary btn-block"
+        >
+          Current Location
+        </button>
+        <br>
         <h4 id="text-center">Search Address</h4>
         <form id="location-form">
           <input type="text" id="location-input" class="form-control" />
@@ -34,6 +43,7 @@
             Submit
           </button>
         </form>
+        <br>
         <div class="card-block" id="formatted-address"></div>
         <div class="card-block" id="address-components"></div>
         <div class="card-block" id="geometry"></div>
