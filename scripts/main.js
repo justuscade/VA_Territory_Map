@@ -79,21 +79,9 @@ function initMap() {
     };
   });
 
-  layerTerritories.addListener("mouseover", (event) => {
-    layerTerritories.revertStyle();
-    layerTerritories.overrideStyle(event.feature, {
-      strokeColor: "#000000",
-      strokeOpacity: 1,
-      strokeWeight: 2,
-    });
-  });
-  layerTerritories.addListener("mouseout", (event) => {
-    layerTerritories.revertStyle();
-  });
-
   let infoAreas = new google.maps.InfoWindow();
 
-  layerTerritories.addListener("dblclick", function (event) {
+  function infoWindowContent(event) {
     let feat = event.feature;
     let html =
       "<div id = 'zip-info'>" +
@@ -112,16 +100,35 @@ function initMap() {
     infoAreas.setPosition(event.latLng);
     infoAreas.setOptions({ pixelOffset: new google.maps.Size(0, 0) });
     infoAreas.open(map);
-  });
+  }
 
   infoWindow = new google.maps.InfoWindow();
-  // -------------------------------------------
+
+  // MAP CLICK EVENTS HANDLING
+  map.addListener("dblclick", function (e) {
+    reverseGeocode(e);
+  });
+
+  let update_timeout = null;
+
+  layerTerritories.addListener("click", function (e) {
+    update_timeout = setTimeout(function () {
+      infoWindowContent(e);
+    }, 200);
+  });
+
+  layerTerritories.addListener("dblclick", function (e) {
+    clearTimeout(update_timeout);
+    reverseGeocode(e);
+  });
 
   // GEOLOCATION
-  const locationButton = document.createElement("button");
-  locationButton.textContent = "Location";
-  locationButton.classList.add("custom-map-control-button");
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(locationButton);
+  // const locationButton = document.createElement("button");
+  // locationButton.textContent = "Location";
+  // locationButton.classList.add("custom-map-control-button");
+  // map.controls[google.maps.ControlPosition.TOP_LEFT].push(locationButton);
+  let locationButton = document.getElementById("location-button");
+
   locationButton.addEventListener("click", () => {
     // Try HTML5 geolocation.
     if (navigator.geolocation) {
@@ -156,17 +163,8 @@ function initMap() {
     );
     infoWindow.open(map);
   }
-  // -------------------------------------------
 
   // REVERSE GEOCODING
-  map.addListener("contextmenu", (e) => {
-    reverseGeocode(e);
-  });
-
-  layerTerritories.addListener("contextmenu", function (e) {
-    reverseGeocode(e);
-  });
-
   function reverseGeocode(mapsMouseEvent) {
     let latitudeClickedPoint = mapsMouseEvent.latLng.toJSON().lat;
     let longitudeClickedPoint = mapsMouseEvent.latLng.toJSON().lng;
@@ -183,7 +181,6 @@ function initMap() {
         params: {
           latlng: latlngQueryString,
           key: keyAPI,
-          result_type: "street_address",
         },
       })
       .then(function (response) {
@@ -226,7 +223,6 @@ function initMap() {
         infoWindow.open(map, markerClickedPoint);
       });
   }
-  // -------------------------------------------
 
   // GEOCODING
   let locationForm = document.getElementById("location-form");
@@ -310,5 +306,4 @@ function initMap() {
         console.log(error);
       });
   }
-  // -------------------------------------------
 }
