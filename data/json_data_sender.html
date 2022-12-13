@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>test</title>
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+    <script>
+        var postData = {
+        "type": "FeatureCollection",
+        "features": [
+            {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "coordinates": [
+                [
+                    [
+                    36.88228137091201,
+                    10.764901886614311
+                    ],
+                    [
+                    37.92065878309643,
+                    9.60543318210685
+                    ],
+                    [
+                    38.74553979897635,
+                    10.813043033298058
+                    ],
+                    [
+                    36.88228137091201,
+                    10.764901886614311
+                    ]
+                ]
+                ],
+                "type": "Polygon"
+            }
+            },
+            {
+            "type": "Feature",
+            "properties": {},
+            "geometry": {
+                "coordinates": [
+                [
+                    [
+                    39.612637633878904,
+                    7.291720914771162
+                    ],
+                    [
+                    41.161228016671544,
+                    6.410825539416479
+                    ],
+                    [
+                    42.00363451071979,
+                    7.732776672415227
+                    ],
+                    [
+                    39.612637633878904,
+                    7.291720914771162
+                    ]
+                ]
+                ],
+                "type": "Polygon"
+            }
+            }
+        ]
+    }
+
+setTimeout(function(){
+    var dataString = JSON.stringify(postData);
+    $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "services/update_json_data.php",
+            data: {myData:dataString},
+            // contentType: "application/json; charset=utf-8",
+            success: function(data){
+                alert('Items added');
+            },
+            error: function(e){
+                console.log(e.message);
+            }
+    });
+},500)
+    
+    </script>
+    
+</body>
+</html>

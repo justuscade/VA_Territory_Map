@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+
+    <title>JMAP</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.css">
+
+    <link rel="stylesheet" href="assets/css/app.css">
+
+
+
+
+    
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <div class="navbar-icon-container">
+            <a href="#" class="navbar-icon pull-right visible-xs" id="nav-btn"><i class="fa fa-bars fa-lg white"></i></a>
+            <a href="#" class="navbar-icon pull-right visible-xs" id="sidebar-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
+          </div>
+          <!-- <a class="navbar-brand" href="#">HMIS (Affordable Housing Marketing Information System)</a> -->
+        </div>
+        <div class="navbar-collapse collapse">
+          <form class="navbar-form navbar-right" role="search">
+            <div class="form-group has-feedback">
+
+                <!-- <span id="searchicon" class="fa fa-search form-control-feedback"></span> -->
+            </div>
+          </form>
+          <ul class="nav navbar-nav">
+           <!-- <li class="hidden-xs" ><img src="assets/img/logo.png" width="150"  height="47" alt=""
+            class="d-inline-block align-middle mr-2"></li><li class="hidden-xs" ><a class="" href="#">AFI</a></li>
+           <li class="hidden-xs"><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-list white"></i>&nbsp;&nbsp;TOC</a></li>
+            -->
+            <li class="hidden-xs"><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-list white"></i>&nbsp;&nbsp;TOC</a></li>
+            <li class="hidden-xs" style="margin-left: 480px;"><a class="navbar-brand" href="#">JUSTUSCADE,    VA_Territory_Map  </a></li>
+
+            <!-- <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="about-btn"><i class="fa fa-question-circle white"></i>&nbsp;&nbsp;About</a></li>
+           <li class="dropdown">
+             <a id="toolsDrop" href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe white"></i>&nbsp;&nbsp;Draw Tool <b class="caret"></b></a>
+             <ul class="dropdown-menu">
+               <li><a  data-toggle="collapse" onclick="drawNewPoint()">&nbsp;&nbsp;Add New Point</a></li>
+              &lt;!&ndash;  <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="legend-btn">&nbsp;English</a></li>&ndash;&gt;
+              &lt;!&ndash;  <li class="divider hidden-xs"></li>&ndash;&gt;
+              &lt;!&ndash;  <li><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="login-btn">&nbsp;&nbsp;Hebrew</a></li>&ndash;&gt;
+             </ul>
+           </li> -->
+          </ul>
+        </div><!--/.navbar-collapse -->
+      </div>
+    </div>
+
+    <div id="container" class="sidebar_background">
+      <div id="sidebar">
+        <div class="sidebar-wrapper">
+          <div class="panel panel-default sidebar_background" id="features">
+            <div class="panel-heading sidebar_background">
+              <h3 class="panel-title" >TOC
+              <button type="button" class="btn btn-xs btn-default pull-right" id="sidebar-hide-btn"><i class="fa fa-chevron-left"></i></button></h3>
+            </div>
+
+            <div  class="panel-body" >
+
+              
+                <button type="button" class="btn btn-primary" style="margin-left:10%;" id="btnGetLoc"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-fill" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 4a4 4 0 1 1 4.5 3.969V13.5a.5.5 0 0 1-1 0V7.97A4 4 0 0 1 4 3.999zm2.493 8.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.319 1.319 0 0 0-.37.265.301.301 0 0 0-.057.09V14l.002.008a.147.147 0 0 0 .016.033.617.617 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.619.619 0 0 0 .146-.15.148.148 0 0 0 .015-.033L12 14v-.004a.301.301 0 0 0-.057-.09 1.318 1.318 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465-1.281 0-2.462-.172-3.34-.465-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411z"></path></svg>Current Location</button>
+                <br>
+                <br>
+                <div id="states_list" class="states_list" style="overflow: auto;height: 550px; max-height: 70%; margin-left: 5%;"></div>
+           
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div id="map">
+          <div style="z-index: 1000000;position: absolute;padding-left: 100px;"  class="row">
+        <!-- <div class="col-md-4">
+                  <div class="card">
+                     <div class="btn btn-danger">
+                          <h5 class="card-title">Total Surveys</h5>
+                          <p class="card-text" id="tc" style="text-align: center;">00</p>
+                      </div>
+                  </div>
+              </div> -->
+          </div>
+      </div>
+    </div>
+   
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.js"></script>
+
+
+    <link rel="stylesheet" href="assets/libs/mortiz_locate.css" />
+<script src="assets/libs/mortiz_locate.js" charset="utf-8"></script>
+
+    <link rel="stylesheet" href="assets/libs/fullscreen/fullscreen.css" />
+<script src="assets/libs/fullscreen/fullscreen.js" charset="utf-8"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.0/papaparse.min.js"></script>
+
+<!-- <script type="text/javascript" src="assets/data/tdata.js"></script> -->
+
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+      $.getJSON('assets/data/tdata.json', function(jsonData) {
+        // console.log(jsonData)
+        territories_data = jsonData; 
+      });  
+      setTimeout(function(){
+        // console.log(territories_data)
+      },1000)
+    </script>
+
+  </body>
+</html>
